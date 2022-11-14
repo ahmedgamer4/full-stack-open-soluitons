@@ -1,12 +1,17 @@
-import { useState } from 'react';
-import { Person } from './components/person';
+import { useState} from 'react';
+import { PersonForm } from './components/personForm';
+import { Filter } from './components/Filter';
 
 function App() {
   const [persons, setPersons] = useState([
-    {name: 'Arto Hellas', number: 0}
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNumber] = useState(0)
+  const [searchName, setSearch] = useState('')
 
   const addPerson = (e) => {
     e.preventDefault()
@@ -17,7 +22,7 @@ function App() {
     }
 
     if (checkPersons(person)) {
-      return
+      console.alert('INVALID INPUT')
     }
     else {
       setPersons(persons.concat(person))
@@ -33,9 +38,7 @@ function App() {
   }
 
   const checkPersons = (person) => {
-    if (persons.includes(person)) {
-      console.alert(`${person.name} is already added to phonebook`)
-    }
+    return (persons.includes(person) || person.number === '0') 
   }
 
   const handleNumberChange = (e) => {
@@ -45,26 +48,30 @@ function App() {
     }
   }
 
+  const handleSearcher = (person, items) => {
+    if (!person) {
+      return items
+    }
+    return items.filter(p => p.name
+                              .toLowerCase()
+                              .includes(person.toLowerCase()))
+  }
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value)
+    console.log(e.target.value)
+  }
+
+  const searchResult = handleSearcher(searchName, persons)
+
+
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input type="text" onChange={handlePersonChange}/>
-          number: <input type="number" onChange={handleNumberChange}/>
-        </div>
-        <div>
-          <button type="sumbit" onClick={addPerson}>add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <div>
-        <ul>
-          {persons.map(person => 
-            <Person name={person.name} number={person.number} key={person.id} />)}
-        </ul>
-      </div>
+      filter shown with <input type="text" onChange={handleSearchChange}/>
+      <PersonForm addPerson={addPerson} handleNumberChange={handleNumberChange} handlePersonChange={handlePersonChange} />
+      <Filter searchResult={searchResult} />
     </div>
   )
 }
