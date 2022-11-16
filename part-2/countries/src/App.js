@@ -46,13 +46,7 @@ const WholeCountry = ({ country }) => {
   )
 }
 
-const Filter = ({ searchResult }) => {
-  const showAllInfo = () => {
-    return 
-  }
-
-  console.log(searchResult)
-
+const Filter = ({ searchResult, setCurrentCountries }) => {
   if (searchResult.length > 10)  {
     return (
       <div>Too many matches, specify another filter</div>
@@ -72,9 +66,9 @@ const Filter = ({ searchResult }) => {
       <ul>
         {searchResult.map(country => 
           <Country 
-           key={searchResult.indexOf(country + 1)}
+           key={searchResult.indexOf(country) + 1}
            name={country.name.common}
-           onClick={showAllInfo} />
+           onClick={() => setCurrentCountries([country])} />
         )}
       </ul>
     </div>
@@ -83,7 +77,9 @@ const Filter = ({ searchResult }) => {
 
 const App = () => {
   const [countries, setCountries] = useState([])
+  const [currentCountries, setCurrentCountries] = useState([])
   const [countrySearch, setSearch] = useState('')
+  const [weather, setWeather] = useState([])
 
   useEffect(() => {
     axios.get('https://restcountries.com/v3.1/all')
@@ -92,25 +88,23 @@ const App = () => {
     })
   }, [countries])
 
+  // useEffect(() => {
+  //   axios.get
+  // })
+
   const handleSearchInput = (e) => {
     setSearch(e.target.value)
+    const currentCountries = countries.filter(c => c.name.common
+                                     .toLowerCase()
+                                     .includes(countrySearch.toLowerCase()))
+    setCurrentCountries(currentCountries)
   }
-
-  const handleSearcher = (country, countries) => {
-    if (!country) {
-      return [] 
-    }
-     return countries.filter(c => c.name.common
-                                        .toLowerCase()
-                                        .includes(country.toLowerCase()))
-  }
-
-  const searchResult = handleSearcher(countrySearch, countries)
 
   return (
     <div>
       <Search onChange={handleSearchInput} />
-      <Filter searchResult={searchResult} />
+      <Filter searchResult={currentCountries}
+              setCurrentCountries={setCurrentCountries} />
     </div>
   )
 }
