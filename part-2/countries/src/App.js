@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const api_key = '19daeb98f3e6bfece2b55af8b1cfd317'
+console.log(process.env.REACT_APP_API_KEY)
+
 const Button = ({ value, onClick }) => {
   return(
     <button onClick={onClick}>{value}</button>
@@ -23,6 +26,32 @@ const Search = ({ onChange }) => {
   )
 }
 
+const Weather = ({ country }) => {
+  const [weather, setWeather] = useState([{}])
+  useEffect(() => {
+    const params = {
+      access_key: process.env.REACT_APP_API_KEY,
+      query: country.capital
+    }
+    axios.get('http://api.weatherstack.com/current', {params})
+    .then(response => {
+      console.log(response.data)
+      setWeather(response.data)
+    }) 
+  })
+  if (weather.length > 0) {
+    const currentWeather = weather[0].current
+    return (
+      <div>
+        <h1>Weather in {country.name.common}</h1>
+        <p>temprature {currentWeather.temperature} Celcius</p>
+        <img src={currentWeather.weather_icons[0]} alt="cloud image" ></img>
+        <p>wind {currentWeather.wind_speed} m/h</p>
+      </div>
+    )
+  }
+}
+
 const WholeCountry = ({ country }) => {
   return (
     <div>
@@ -39,9 +68,8 @@ const WholeCountry = ({ country }) => {
           )}
         </ul>
       </div>
-      <div>
-        {country.flag}
-      </div>
+      <img src={country.flag} alt="flag"></img>
+      <Weather country={country} />
     </div>
   )
 }
@@ -79,7 +107,6 @@ const App = () => {
   const [countries, setCountries] = useState([])
   const [currentCountries, setCurrentCountries] = useState([])
   const [countrySearch, setSearch] = useState('')
-  const [weather, setWeather] = useState([])
 
   useEffect(() => {
     axios.get('https://restcountries.com/v3.1/all')
@@ -88,9 +115,6 @@ const App = () => {
     })
   }, [countries])
 
-  // useEffect(() => {
-  //   axios.get
-  // })
 
   const handleSearchInput = (e) => {
     setSearch(e.target.value)
