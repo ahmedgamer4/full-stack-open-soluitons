@@ -1,5 +1,8 @@
-export const Person = ({ name, number }) => {
+export const Person = ({ name, number, onClick }) => {
   return (
-    <li>{name} {number}</li>
+    <div>
+      <li>{name} {number}</li>
+      <button onClick={onClick}>delete</button>
+    </div>
   )
 }

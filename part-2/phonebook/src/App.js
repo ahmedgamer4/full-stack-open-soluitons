@@ -2,26 +2,21 @@ import { useEffect, useState} from 'react';
 import { PersonForm } from './components/personForm';
 import { Filter } from './components/Filter';
 import axios from 'axios';
+import libBackend from './services/persons';
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  const [persons, setPersons] = useState([])
+  const [resultPersons, setResult] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNumber] = useState(0)
   const [searchName, setSearch] = useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios.get('http://localhost:3001/persons')
+    libBackend.getAll()
     .then(response => {
-      console.log(response.data)
-      setPersons(response.data)
+      setPersons(response)
     })
-  }, [])
+  }, []) 
 
   const addPerson = (e) => {
     e.preventDefault()
@@ -36,8 +31,11 @@ const App = () => {
     }
     else {
       setPersons(persons.concat(person))
+      libBackend.create(person)
+           .catch(error => console.log('fail to add this person to the backend'))
     }
   }
+
   
   const handlePersonChange = (e) => {
     console.log(e.target.value)
@@ -58,30 +56,33 @@ const App = () => {
     }
   }
 
-  const handleSearcher = (person, items) => {
-    if (!person) {
-      return items
-    }
-    return items.filter(p => p.name
-                              .toLowerCase()
-                              .includes(person.toLowerCase()))
-  }
-
-  const handleSearchChange = (e) => {
+  const handleSearcher = (e ) => {
     setSearch(e.target.value)
-    console.log(e.target.value)
+    if (!searchName) {
+      setResult(persons)
+    }
+    const searchResult = persons.filter(p => p.name
+                                .toLowerCase()
+                                .includes(searchName.toLowerCase()))
+    
+    setResult(searchResult)
   }
 
-  const searchResult = handleSearcher(searchName, persons)
-
-
+  const deletePerson = (person) => {
+    if (window.confirm(`Do you want to delete ${person.name} ?`)) {
+      libBackend.remove(person.id)
+         .then(response => console.log(response.data))
+         .catch(err => console.log('could not delete this person'))
+      setPersons(persons.filter(p=> person.id !== p.id))
+    }
+  }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      filter shown with <input type="text" onChange={handleSearchChange}/>
+      filter shown with <input type="text" onChange={handleSearcher}/>
       <PersonForm addPerson={addPerson} handleNumberChange={handleNumberChange} handlePersonChange={handlePersonChange} />
-      <Filter searchResult={searchResult} />
+      <Filter persons={persons} searchResult={resultPersons} remove={deletePerson} />
     </div>
   )
 }
