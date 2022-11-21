@@ -12,4 +12,4 @@ export const PersonForm = ({ addPerson, handleNumberChange, handlePersonChange }
     </form>
     </div>
   )
-  }
+}

@@ -2,6 +2,7 @@ import { Person } from "./person"
 
 export const Filter = ({ persons, searchResult, remove }) => {
   if (searchResult.length === 0) {
+    console.log(persons)
     return ( 
       <div>
         <h2>Numbers</h2>

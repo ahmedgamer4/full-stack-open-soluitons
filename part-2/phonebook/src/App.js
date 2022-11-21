@@ -1,19 +1,19 @@
 import { useEffect, useState} from 'react';
 import { PersonForm } from './components/personForm';
 import { Filter } from './components/Filter';
-import axios from 'axios';
 import libBackend from './services/persons';
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [resultPersons, setResult] = useState([])
   const [newName, setNewName] = useState('')
-  const [newNumber, setNumber] = useState(0)
+  const [newNumber, setNumber] = useState('')
   const [searchName, setSearch] = useState('')
 
   useEffect(() => {
     libBackend.getAll()
     .then(response => {
+      console.log(response)
       setPersons(response)
     })
   }, []) 
@@ -23,16 +23,29 @@ const App = () => {
     const person = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
     }
 
-    if (checkPersons(person)) {
-      console.alert('INVALID INPUT')
+    const onlyPerson = persons.filter((person) => 
+      person.name === newName
+    )
+
+    if (onlyPerson.length !== 0) {
+      console.log('yes')
+      if (window.confirm(`${person.name} is already added to the phonebook, replace the old number with a new one ? `)) {
+        const changedPerson = {...onlyPerson[0], number: newNumber} 
+
+        libBackend.update(onlyPerson[0].id, changedPerson)
+                  .then(returnedPerson => {
+                    console.log(returnedPerson)
+                    setPersons(persons.map(p => p.id !== onlyPerson[0].id ? p : returnedPerson))
+                  })
+      }
     }
     else {
-      setPersons(persons.concat(person))
+      setPersons((persons.concat(person)))
       libBackend.create(person)
            .catch(error => console.log('fail to add this person to the backend'))
+      setSearch('')
     }
   }
 
@@ -42,11 +55,9 @@ const App = () => {
     if (e.target.value === '') {
       return
     }
-    setNewName(e.target.value)
-  }
-
-  const checkPersons = (person) => {
-    return (persons.includes(person) || person.number === '0') 
+    else {
+      setNewName(e.target.value)
+    }
   }
 
   const handleNumberChange = (e) => {
