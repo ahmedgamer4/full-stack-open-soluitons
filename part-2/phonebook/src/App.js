@@ -2,13 +2,16 @@ import { useEffect, useState} from 'react';
 import { PersonForm } from './components/personForm';
 import { Filter } from './components/Filter';
 import libBackend from './services/persons';
+import { ErrorMessage, Message } from './components/Message';
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [resultPersons, setResult] = useState([])
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNumber] = useState('')
-  const [searchName, setSearch] = useState('')
+  const [newName, setNewName] = useState(null)
+  const [newNumber, setNumber] = useState(null)
+  const [searchName, setSearch] = useState(null)
+  const [message, setMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     libBackend.getAll()
@@ -38,22 +41,34 @@ const App = () => {
                   .then(returnedPerson => {
                     console.log(returnedPerson)
                     setPersons(persons.map(p => p.id !== onlyPerson[0].id ? p : returnedPerson))
+                    setMessage(`${returnedPerson.name} has beed added`)
                   })
+                  .catch(err => {
+                    setErrorMessage(`Information of ${err} has already been removed from server`)
+                  })
+        setTimeout(() => {
+          setMessage(null)
+          setErrorMessage(null)
+        }, 5000);
       }
     }
-    else {
+    else if (newName !== null){
       setPersons((persons.concat(person)))
       libBackend.create(person)
            .catch(error => console.log('fail to add this person to the backend'))
       setSearch('')
+      setMessage(`${person.name} has been added`)
     }
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000);
   }
 
   
   const handlePersonChange = (e) => {
     console.log(e.target.value)
-    if (e.target.value === '') {
-      return
+    if (!e.target.value) {
+      alert('could not add null')
     }
     else {
       setNewName(e.target.value)
@@ -91,6 +106,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Message message={message} />
+      <ErrorMessage message={errorMessage} />
       filter shown with <input type="text" onChange={handleSearcher}/>
       <PersonForm addPerson={addPerson} handleNumberChange={handleNumberChange} handlePersonChange={handlePersonChange} />
       <Filter persons={persons} searchResult={resultPersons} remove={deletePerson} />
