@@ -5,6 +5,7 @@ const cors = require('cors')
 
 app.use(cors())
 app.use(express.json())
+app.use(express.static('build'))
 
 let notes = [
   {
@@ -76,7 +77,7 @@ app.post('/api/notes', (request, response) => {
     id: generateId(),
   }
 
-  notes = notes.cancat(note)
+  notes = notes.concat(note)
 
   response.json(note)
 })
