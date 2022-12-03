@@ -54,13 +54,20 @@ const App = () => {
     }
     else if (newName !== null){
       setPersons((persons.concat(person)))
-      libBackend.create(person)
-           .catch(error => console.log('fail to add this person to the backend'))
+      libBackend
+        .create(person)
+        .then((result) => {
+          console.log(result)
+          setMessage(`${person.name} has been added`)
+        })
+        .catch(createdPerson => setErrorMessage(`Person validation failed: name: Path "name"
+         (${person.name})
+         is shorter than the minimum allowed length (3)`), 5000)
       setSearch('')
-      setMessage(`${person.name} has been added`)
     }
     setTimeout(() => {
       setMessage(null)
+      setErrorMessage(null)
     }, 5000);
   }
 
