@@ -17,9 +17,9 @@ module.exports = {
       'error',
       'never',
     ],
-    indent: {
+    indent: [
       'error',
       2,
-    },
+    ],
   },
 }

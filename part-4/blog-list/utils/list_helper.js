@@ -18,35 +18,33 @@ const mostBlogs = (blogs) => {
   if (blogs.length === 0) {
     return {}
   }
-  else {
-    let authors = blogs.reduce((pre, blog) => {
-      pre[blog.author] = (pre[blog.author] || 0) + 1
-      return pre
-    }, {})
-    let max = Math.max(...Object.values(authors))
-    let frequent = Object.keys(authors).filter(author => authors[author] === max)
-    return {
-      author: frequent[0],
-      blogs: max,
-    }
+
+  const authors = blogs.reduce((pre, blog) => {
+    pre[blog.author] = (pre[blog.author] || 0) + 1
+    return pre
+  }, {})
+  const max = Math.max(...Object.values(authors))
+  const frequent = Object.keys(authors).filter((author) => authors[author] === max)
+  return {
+    author: frequent[0],
+    blogs: max,
   }
 }
 
-const  mostLikes = (blogs) => {
+const mostLikes = (blogs) => {
   if (blogs.length === 0) {
     return {}
   }
-  else {
-    let authors = blogs.reduce((pre, blog) => {
-      pre[blog.author] = (pre[blog.author] || 0) + blog.likes
-      return pre
-    }, {})
-    let max = Math.max(...Object.values(authors))
-    let liked = Object.keys(authors).filter(author => authors[author] === max)
-    return {
-      author: liked[0],
-      likes: max,
-    }
+
+  const authors = blogs.reduce((pre, blog) => {
+    pre[blog.author] = (pre[blog.author] || 0) + blog.likes
+    return pre
+  }, {})
+  const max = Math.max(...Object.values(authors))
+  const liked = Object.keys(authors).filter((author) => authors[author] === max)
+  return {
+    author: liked[0],
+    likes: max,
   }
 }
 
