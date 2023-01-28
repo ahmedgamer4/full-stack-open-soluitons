@@ -74,11 +74,13 @@ describe('total likes', () => {
 })
 
 describe('The most liked one', () => {
-  const onlyOne = [{
-    title: 'Canonical string reduction',
-    author: 'Edsger W. Dijkstra',
-    likes: 12,
-  }]
+  const onlyOne = [
+    {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      likes: 12,
+    },
+  ]
 
   test('when list has only one blog, equals this blog', () => {
     const result = favoriteBlog(onlyOne)

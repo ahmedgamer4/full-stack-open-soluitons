@@ -84,27 +84,6 @@ describe('addition of a new blog', () => {
     expect(titles).toContain('some title 2')
   })
 
-  test('a valid blog can be added', async () => {
-    const newBlog = {
-      title: 'some title 2',
-      author: 'me',
-      url: '@.mail',
-      likes: 2,
-    }
-
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(401)
-      .expect('Content-Type', /application\/json/)
-
-    const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-
-    const titles = blogsAtEnd.map((b) => b.title)
-    expect(titles).toContain('some title 2')
-  })
-
   test('verify that if blog does not have title or url the status code will be 400', async () => {
     const newBlog = {
       title: 'any',
@@ -150,6 +129,8 @@ describe('deletion of blogs', () => {
       .post('/api/blogs')
       .set('Authorization', `bearer ${token}`)
       .send(newBlog)
+
+    return token
   })
 
   test('a blog can be deleted', async () => {
@@ -168,6 +149,21 @@ describe('deletion of blogs', () => {
     const titles = blogsAtEnd.map((b) => b.title)
     expect(titles).not.toContain(blogToDelete.title)
   })
+
+  test('fails when the token is invalid', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    // token = null
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `bearer ${null}`)
+      .expect(401)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+  })
 })
 
 test('a blog can be updated', async () => {
@@ -175,7 +171,7 @@ test('a blog can be updated', async () => {
   const blog = blogsAtStart[0]
 
   await api
-    .patch(`/api/blogs/${blog.id}`)
+    .put(`/api/blogs/${blog.id}`)
     .send({ likes: 10 })
     .expect(200)
 

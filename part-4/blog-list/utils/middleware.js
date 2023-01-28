@@ -17,7 +17,7 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === 'ValidationError') {
     return res.status(400).send({ err: err.message })
   }
-  if (err.name === 'jsonWebTokenError') {
+  if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
       err: 'invalid token',
     })
@@ -25,6 +25,16 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === 'TokenExpiredError') {
     return res.status(401).json({
       err: 'token expired',
+    })
+  }
+  if (err.name === 'BSONTypeError') {
+    return res.status(400).json({
+      err: 'BSONTypeError',
+    })
+  }
+  if (err.name === 'CastError') {
+    return res.status(400).json({
+      err: 'Cast Error',
     })
   }
 

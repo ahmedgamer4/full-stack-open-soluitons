@@ -1,3 +1,6 @@
-get http://localhost:3001/api/blogs
-Content-Type: application/json
+# get http://localhost:3001/api/blogs
+# Content-Type: application/json
 # Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1heCIsImlkIjoiNjNiZTg4YWZiNzY1MmVhZjYwZWMyY2NjIiwiaWF0IjoxNjczNDMxMjcxfQ.AC0MtGW5r1WXzgPVQgNz7vZjLjeY0eJoQriS6LMwnEY
+
+post http://localhost:3003/api/testing/reset
+Content-Type: application/json
