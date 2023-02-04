@@ -15,9 +15,9 @@ const Anec = ({ anecdote, vote }) => {
 
 const Anecs = () => {
   const anecdotes = useSelector(({ anecs, filter }) =>
-    anecs.sort((a, b) => (a.votes > b.votes ? -1 : 1))
-      .filter((a) => a.content.toLowerCase()
-        .includes(filter.toLowerCase()))
+    anecs
+      .filter((a) => a.content.toLowerCase().includes(filter.toLowerCase()))
+      .sort((a, b) => (a.votes > b.votes ? -1 : 1))
   );
   const dispatch = useDispatch();
 

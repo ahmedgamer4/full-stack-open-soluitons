@@ -1,18 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { combineReducers, createStore } from "redux";
 import { Provider } from "react-redux";
 import App from "./App";
 import anecsReducer from "./reducers/anecdoteReducer";
 import filterReducer from "./reducers/filterReducer";
+import { configureStore } from "@reduxjs/toolkit";
 
-const reducer = combineReducers({
-  anecs: anecsReducer,
-  filter: filterReducer,
-})
+const store = configureStore({
+  reducer: {
+    anecs: anecsReducer,
+    filter: filterReducer,
+  },
+});
 
-const store = createStore(reducer);
-console.log(store)
+console.log(store.getState());
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
