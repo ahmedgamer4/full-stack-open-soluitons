@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux";
 import { createAnec } from "../reducers/anecdoteReducer";
+import { createNotification } from "../reducers/notificationReducer";
 
 const NewAnec = () => {
   const dispatch = useDispatch();
@@ -9,6 +10,10 @@ const NewAnec = () => {
     const content = event.target.anec.value;
     event.target.anec.value = "";
     dispatch(createAnec(content));
+    dispatch(`a new message '${createNotification(content)}'`)
+    setTimeout(() => {
+      dispatch(createNotification(''))
+    }, 5000);
   };
 
   return (
