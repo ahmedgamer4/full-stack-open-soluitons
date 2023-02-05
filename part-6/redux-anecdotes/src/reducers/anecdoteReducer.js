@@ -26,12 +26,7 @@ const anecSlice = createSlice({
   initialState,
   reducers: {
     createAnec(state, action) {
-      const content = action.payload
-      state.push({
-        content,
-        id: getId(),
-        votes: 0,
-      })
+      state.push(action.payload)
     },
     voteOf(state, action) {
       const id = action.payload

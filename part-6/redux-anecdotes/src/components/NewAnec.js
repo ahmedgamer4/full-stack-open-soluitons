@@ -1,15 +1,18 @@
 import { useDispatch } from "react-redux";
 import { createAnec } from "../reducers/anecdoteReducer";
 import { createNotification } from "../reducers/notificationReducer";
+import anecService from "../services/anecs";
 
 const NewAnec = () => {
   const dispatch = useDispatch();
 
-  const addAnec = (event) => {
+  const addAnec = async (event) => {
     event.preventDefault();
     const content = event.target.anec.value;
     event.target.anec.value = "";
-    dispatch(createAnec(content));
+    const obj = await anecService.createNew(content)
+    console.log(obj)
+    dispatch(createAnec(obj));
     dispatch(`a new message '${createNotification(content)}'`)
     setTimeout(() => {
       dispatch(createNotification(''))
