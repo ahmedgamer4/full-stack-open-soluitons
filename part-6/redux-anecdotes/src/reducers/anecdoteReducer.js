@@ -41,9 +41,12 @@ const anecSlice = createSlice({
         votes: anecToChange.votes + 1,
       }
       return state.map((a) => a.id === id ? updatedAnec : a)
+    },
+    setNotes(state, action) {
+      return action.payload
     }
   }
 })
 
-export const { createAnec, voteOf } = anecSlice.actions
+export const { createAnec, voteOf, setNotes } = anecSlice.actions
 export default anecSlice.reducer;
