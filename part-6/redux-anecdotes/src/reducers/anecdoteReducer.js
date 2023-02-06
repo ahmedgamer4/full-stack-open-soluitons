@@ -29,26 +29,24 @@ const anecSlice = createSlice({
     appendAnec(state, action) {
       state.push(action.payload)
     },
-    voteOf(state, action) {
-      const id = action.payload
-      const anecToChange = state.find((a) => a.id === id)
-      const updatedAnec = {
-        ...anecToChange,
-        votes: anecToChange.votes + 1,
-      }
-      return state.map((a) => a.id === id ? updatedAnec : a)
-    },
     setAnecs(state, action) {
       return action.payload
+    },
+    changeAnec(state, action) {
+      const id = action.payload.id
+      const updatedAnec = action.payload
+      console.log(updatedAnec)
+      return state.map((a) => a.id === id ? updatedAnec : a)  // You should return the value because this not mutation
     }
   }
 })
 
-export const { appendAnec, voteOf, setAnecs} = anecSlice.actions
+export const { appendAnec, setAnecs, changeAnec } = anecSlice.actions
 
 export const initalizeAnecs = () => {
   return async dispatch => {
     const anecs = await anecService.getAll()
+    console.log(anecs)
     dispatch(setAnecs(anecs))
   }
 }
@@ -59,4 +57,15 @@ export const createAnec = (content) => {
     dispatch(appendAnec(newAnec))
   }
 }
+
+export const voteOf = (anec) => {
+  return async dispatch => {
+    const anecToUpdate = { ...anec, votes: anec.votes + 1}
+    console.log(anecToUpdate)
+    const updatedAnec = await anecService.update(anecToUpdate)
+    console.log(updatedAnec)
+    dispatch(changeAnec(updatedAnec))
+  }
+}
+
 export default anecSlice.reducer;
