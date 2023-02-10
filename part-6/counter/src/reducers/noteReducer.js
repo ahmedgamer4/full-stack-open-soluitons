@@ -1,20 +1,56 @@
-const noteReducer = (state = [], action) => {
-  switch (action.type) {
-    case "NEW_NOTE":
-      return [...state, action.data];
+import { createSlice } from "@reduxjs/toolkit";
+import noteService from "../services/notes";
 
-    case "TOGGLE_IMPORTANCE":
-      const id = action.data.id;
-      const noteToChange = state.find((n) => n.id === id);
-      const updatedNote = {
-        ...noteToChange,
-        important: !noteToChange.important,
-      };
-      return state.map((n) => (id === n.id ? updatedNote : n));
+const initialState = [
+  {
+    content: "reducer defines how redux store works",
+    important: true,
+    id: 1,
+  },
+  {
+    content: "state of store can contain any data",
+    important: false,
+    id: 2,
+  },
+];
 
-    default:
-      return state;
+const noteSlice = createSlice({
+  name: "notes",
+  initialState: [],
+  reducers: {
+    toggleImportanceOf(state, action) {
+      const id = action.payload
+      const noteToChange = state.find((n) => n.id === id)
+      const changedNote = { 
+        ...noteToChange, 
+        important: !noteToChange.important 
+      }
+      return state.map(note =>
+        note.id !== id ? note : changedNote 
+      )    
+    },
+    setNotes(state, action) {
+      return action.payload
+    },
+    appendNote(state, action) {
+      state.push(action.payload)
+    }
+  },
+});
+
+export const { toggleImportanceOf, setNotes, appendNote } = noteSlice.actions
+
+export const initalizeNotes = () => {
+  return async dispatch => {
+    const notes = await noteService.getAll()
+    dispatch(setNotes(notes))
   }
-};
+}
 
-export default noteReducer;
+export const createNote = (content) => {
+  return async dispatch => {
+    const newNote = await noteService.createNew(content)
+    dispatch(appendNote(newNote))
+  }
+}
+export default noteSlice.reducer;
